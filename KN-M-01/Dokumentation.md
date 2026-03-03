@@ -1,10 +1,10 @@
-# NOSQL-M165
-
-## Abgaben laut Anforderungen
+# KN-M-01: Installation und Verwaltung von MongoDB
 
 ---
 
-### 1. Cloud-Init Datei mit geändertem Passwort
+## A) Installation (30%)
+
+### 1. Cloud-Init Datei
 
 Die Cloud-Init Datei befindet sich im selben Ordner wie diese Dokumentation.
 
@@ -12,188 +12,196 @@ Die Cloud-Init Datei befindet sich im selben Ordner wie diese Dokumentation.
 
 ---
 
-### 2. Screenshot von Compass mit bestehenden Datenbanken
+### 2. Compass – Bestehende Datenbanken
 
 <img width="378" height="520" alt="MongoDB Compass - Datenbankliste" src="https://github.com/user-attachments/assets/3c601022-d906-409e-9ff6-fb50a05be87e" />
 
 ---
 
-### 3. Connection String - `authSource=admin` erklärt
+### 3. `authSource=admin` erklärt
 
-**Was macht `authSource=admin`?**
+Der Parameter `authSource=admin` teilt MongoDB mit, **in welcher Datenbank der Benutzer gespeichert ist** und dort authentifiziert werden soll.
 
-Der Parameter `authSource=admin` gibt MongoDB an, in welcher Datenbank nach dem Benutzer gesucht werden soll, um ihn zu authentifizieren.
+**Warum ist `admin` korrekt?**
 
-**Warum ist dieser Parameter korrekt?**
-
-Im Cloud-Init-Skript wurde der Benutzer `admin` in der Datenbank `admin` erstellt:
+Im Cloud-Init wurde der Benutzer mit `use admin` erstellt – er ist also in der `admin`-Datenbank gespeichert:
 
 ```javascript
-use admin;              // Wechsel zur admin-Datenbank
+use admin;
 db.createUser({
-  user: "admin",        // User wird in der admin-DB gespeichert
+  user: "admin",
   pwd: "MyPassword.45",
-  ...
+  roles: [...]
 });
 ```
 
-Die Benutzerinformationen (Username, Passwort-Hash, Rechte) werden in der Collection `system.users` der `admin`-Datenbank gespeichert.
-
-**Beweis:**
-```javascript
-use admin
-db.system.users.find()  // Zeigt den User "admin" in der admin-DB
-```
-
-Deshalb muss `authSource=admin` angegeben werden – damit MongoDB weiß, dass der User in der `admin`-Datenbank zu finden ist.
-
-**Quelle:** [MongoDB Connection String URI Format](https://www.mongodb.com/docs/manual/reference/connection-string/)
+MongoDB speichert Benutzer in der Collection `system.users` der jeweiligen Datenbank. Da unser Benutzer in `admin` erstellt wurde, muss `authSource=admin` angegeben werden – sonst findet MongoDB den Benutzer nicht und verweigert die Verbindung.
 
 ---
 
 ### 4. Die beiden `sed`-Befehle erklärt
 
-**Was `sed` bewirkt:**
-
 `sed` (Stream Editor) ist ein Linux-Tool zum automatischen Suchen und Ersetzen von Text in Dateien.
 
-**Erster `sed`-Befehl:**
+**Befehl 1 – BindIP ändern:**
+```bash
+sudo sed -i 's/127.0.0.1/0.0.0.0/g' /etc/mongod.conf
+```
+Ersetzt `127.0.0.1` mit `0.0.0.0`. Ohne diese Änderung akzeptiert MongoDB nur lokale Verbindungen – Compass von einem externen PC würde nicht funktionieren.
 
-Ersetzt `127.0.0.1` mit `0.0.0.0` in der MongoDB-Konfiguration, damit externe Verbindungen erlaubt werden. Ohne diese Änderung akzeptiert MongoDB nur lokale Verbindungen.
+**Befehl 2 – Authentifizierung aktivieren:**
+```bash
+sudo sed -i 's/#security:/security:\n  authorization: enabled/g' /etc/mongod.conf
+```
+Aktiviert die Authentifizierung. Ohne diese Änderung kann jeder ohne Login auf die Datenbank zugreifen.
 
-**Zweiter `sed`-Befehl:**
-
-Ersetzt `#security:` mit `security:\n  authorization: enabled`, um die Authentifizierung zu aktivieren. Ohne diese Änderung kann jeder ohne Login auf die Datenbank zugreifen.
-
-**Quelle:** [MongoDB Configuration Options](https://www.mongodb.com/docs/manual/reference/configuration-options/)
+**Warum sind diese Befehle notwendig?**
+MongoDB wird aus Sicherheitsgründen mit restriktiven Standardeinstellungen installiert. `sed` automatisiert die notwendigen Anpassungen, damit wir die Datenbank von aussen erreichen und sicher mit Passwort nutzen können.
 
 ---
 
-### 5. Screenshot der MongoDB-Konfigurationsdatei
+### 5. MongoDB Konfigurationsdatei
 
-**BindIP-Konfiguration:**
+**BindIP (0.0.0.0 sichtbar):**
 
 <img width="808" height="71" alt="MongoDB Config - bindIp" src="https://github.com/user-attachments/assets/6ce903d1-263d-44e3-882b-46a5f7772053" />
 
-**Security-Konfiguration:**
+**Security / Authorization (enabled sichtbar):**
 
 <img width="838" height="75" alt="MongoDB Config - security" src="https://github.com/user-attachments/assets/2b1de31b-10d4-49d6-996d-31d82d57e70c" />
 
-# C) Erste Schritte Shell (10%)
+---
 
-## 📸 Screenshot MongoDB Compass
+## B) Erste Schritte GUI (30%)
 
-Screenshot von MongoDB Compass, der zeigt, dass die Befehle ausgeführt wurden:
+### 1. Dokument vor dem Einfügen
 
-<img width="579" height="693" alt="Screenshot 2026-03-03 111041" src="https://github.com/user-attachments/assets/b1c38ad3-7c7a-4d8f-a002-633d105c5f01" />
+<img width="841" height="145" alt="Dokument vor dem Einfügen" src="https://github.com/user-attachments/assets/ab287e17-6ad9-40c2-8396-6e870d965231" />
 
 ---
 
-## 📸 Screenshot MongoDB-Shell (Linux-Server)
+### 2. Dokument nach Anpassung des Datentyps
 
-Screenshot der MongoDB-Shell auf dem Linux-Server, der zeigt, dass die Befehle eingegeben und ausgeführt wurden:
-
-<img width="633" height="373" alt="Screenshot 2026-03-03 114404" src="https://github.com/user-attachments/assets/7520478f-037e-4456-9ca3-2297ddf78ced" />
+<img width="864" height="397" alt="Compass nach Datumänderung" src="https://github.com/user-attachments/assets/8248997d-e452-43b7-b574-b73e743412b9" />
 
 ---
 
-## ❓ Was machen die Befehle 1–5?
+### 3. Export-Datei & Erklärung
 
-### `show dbs` / `show databases`
-- Zeigt alle vorhandenen Datenbanken inklusive ihrer Grösse an.
-- Beide Befehle haben die gleiche Funktion.
+<img width="465" height="296" alt="Export JSON" src="https://github.com/user-attachments/assets/f65bc34b-4452-475b-b9ad-d31a28cdffc5" />
 
-### `use Tarlos`
-- Wechselt zur Datenbank **Tarlos**.
-- Falls sie noch nicht existiert, wird sie beim ersten Einfügen von Daten automatisch erstellt.
+**Erklärung:**
 
-### `show collections` / `show tables`
-- Zeigt alle Collections der aktuell ausgewählten Datenbank an.
-- Beide Befehle sind funktional identisch.
+JSON kennt keinen eigenen Datum-Datentyp. Gibt man `"2008-04-22"` ein, wird es automatisch als **String** gespeichert – nicht als echtes Datum.
 
----
+Um ein Datum direkt korrekt einzufügen, hätte man das BSON-Format `$date` verwenden müssen:
 
-## 🔎 Unterschied: Collections vs. Tables
+```json
+{ "Geburtsdatum": { "$date": "2008-04-22T00:00:00.000Z" } }
+```
 
-### Tables
-- Begriff aus SQL (relationale Datenbanken)
-- Daten sind in festen Zeilen und Spalten organisiert
-- Strenges Schema (jede Zeile hat dieselbe Struktur)
+MongoDB versteht `$date` als echten Datum-Datentyp (BSON) und speichert es korrekt.
 
-### Collections
-- Begriff aus MongoDB (NoSQL)
-- Speichern flexible JSON-Dokumente
-- Kein festes Schema erforderlich (Dokumente können unterschiedliche Felder haben)
+**Implikationen auf andere Datentypen:**
+Dasselbe Problem betrifft auch andere Typen. Zum Beispiel wird `"200"` (mit Anführungszeichen) als String gespeichert statt als Integer `200`. Das kann bei Berechnungen oder Abfragen zu falschen Resultaten führen.
 
-> Hinweis: In MongoDB existiert `show tables` nur als Alias für Benutzer, die an SQL-Datenbanken gewöhnt sind.
-
-# D) Rechte und Rollen (30%)
-
-## ❌ Fehler bei falscher Authentifizierungsquelle
-
-Screenshot des Fehlers bei einer Verbindung mit einer falschen `authSource`:
-
-<img width="1266" height="957" alt="Screenshot 2026-03-03 131714" src="https://github.com/user-attachments/assets/cdefac1d-11b5-4520-93f7-2442c6a37cf5" />
+**Warum dieser komplizierte Weg?**
+JSON ist ein simples Format mit nur wenigen Grundtypen (String, Number, Boolean, Array, Object, null). MongoDB erweitert JSON intern mit BSON, um zusätzliche Typen wie `Date`, `Int32` oder `ObjectId` zu unterstützen – diese müssen jedoch explizit angegeben werden.
 
 ---
 
-## 👤 Erstellung der Benutzer
+## C) Erste Schritte Shell (10%)
 
-Skript zur Erstellung der beiden Benutzer mit unterschiedlichen Rollen:
+### Screenshot Compass Shell
 
-<img width="490" height="180" alt="image" src="https://github.com/user-attachments/assets/ffc0e105-4307-4ec8-8561-391ffa99d5e4" />
-
-<img width="519" height="212" alt="image" src="https://github.com/user-attachments/assets/062be834-3bf6-45cf-aadd-1f7ca8b44193" />
+<img width="579" height="693" alt="Compass Shell Befehle" src="https://github.com/user-attachments/assets/b1c38ad3-7c7a-4d8f-a002-633d105c5f01" />
 
 ---
 
-# 🔐 Benutzer 1 – Eingeschränkte Rechte (z. B. nur Lesen)
+### Screenshot MongoDB Shell (Linux-Server)
 
-## ✅ Login erfolgreich
-
-Screenshot des erfolgreichen Logins  
-(Verbindungstext ist sichtbar):
-
-<img width="1167" height="417" alt="image" src="https://github.com/user-attachments/assets/39a69449-f76c-4147-8a52-093cadeb97f4" />
-
-## ✅ Lesen von Daten funktioniert
-
-Screenshot zeigt, dass Daten ohne Fehler gelesen werden können:
-
-<img width="556" height="214" alt="image" src="https://github.com/user-attachments/assets/7990950e-ae54-42e7-a38a-495dd2de9277" />
-
-## ❌ Schreiben von Daten nicht erlaubt
-
-Screenshot zeigt einen Fehler beim Versuch, Daten zu schreiben  
-(keine Schreibrechte vorhanden):
-
-<img width="841" height="145" alt="image" src="https://github.com/user-attachments/assets/3e2087c4-c3a9-446d-bc46-285e5809e4ef" />
+<img width="633" height="373" alt="Linux Server Shell Befehle" src="https://github.com/user-attachments/assets/7520478f-037e-4456-9ca3-2297ddf78ced" />
 
 ---
 
-# 🔓 Benutzer 2 – Erweiterte Rechte (Lesen & Schreiben)
+### Was machen die Befehle 1–5?
 
-## ✅ Login erfolgreich
+| Befehl | Funktion |
+|---|---|
+| `show dbs` | Zeigt alle Datenbanken mit Grösse an |
+| `show databases` | Identisch mit `show dbs` |
+| `use Tarlos` | Wechselt in die Datenbank `Tarlos` |
+| `show collections` | Zeigt alle Collections der aktuellen Datenbank |
+| `show tables` | Identisch mit `show collections` (SQL-Alias) |
 
-Screenshot des erfolgreichen Logins  
-(Verbindungstext ist sichtbar):
+### Unterschied: Collections vs. Tables
 
-<img width="1156" height="414" alt="Screenshot 2026-03-03 135401" src="https://github.com/user-attachments/assets/42a4db9a-8b29-44e1-bdee-05b5f333761a" />
+**Tables** (SQL) – Daten sind in festen Zeilen und Spalten gespeichert. Jede Zeile hat dieselbe Struktur (strenges Schema).
 
-## ✅ Lesen von Daten funktioniert
+**Collections** (MongoDB/NoSQL) – Speichern flexible JSON-Dokumente ohne festes Schema. Dokumente in derselben Collection können unterschiedliche Felder haben.
 
-Screenshot zeigt, dass Daten ohne Fehler gelesen werden können.
-
-## ✅ Schreiben von Daten funktioniert
-
-Screenshot zeigt, dass Daten erfolgreich geschrieben werden können:
-
-<img width="542" height="442" alt="Screenshot 2026-03-03 135342" src="https://github.com/user-attachments/assets/91d6734e-7031-4ea4-a91a-25e1bffa9f28" />
+`show tables` existiert in MongoDB nur als Alias für Benutzer, die SQL gewohnt sind.
 
 ---
 
-## 📌 Fazit
+## D) Rechte und Rollen (30%)
 
-- Benutzer 1 besitzt nur Leserechte.
-- Benutzer 2 besitzt Lese- und Schreibrechte.
-- Eine falsche Authentifizierungsquelle (`authSource`) führt zu einem Verbindungsfehler.
+### 1. Fehler bei falscher `authSource`
+
+<img width="1266" height="957" alt="Fehler falsche authSource" src="https://github.com/user-attachments/assets/cdefac1d-11b5-4520-93f7-2442c6a37cf5" />
+
+---
+
+### 2. Skript zur Benutzererstellung
+
+```javascript
+// Benutzer 1: leser – nur Lesen, gespeichert in Tarlos
+use Tarlos
+db.createUser({
+  user: "leser",
+  pwd: "leser123",
+  roles: [{ role: "read", db: "Tarlos" }]
+})
+
+// Benutzer 2: schreiber – Lesen & Schreiben, gespeichert in admin
+use admin
+db.createUser({
+  user: "schreiber",
+  pwd: "schreiber123",
+  roles: [{ role: "readWrite", db: "Tarlos" }]
+})
+```
+
+<img width="490" height="180" alt="Benutzer 1 erstellt" src="https://github.com/user-attachments/assets/ffc0e105-4307-4ec8-8561-391ffa99d5e4" />
+
+<img width="519" height="212" alt="Benutzer 2 erstellt" src="https://github.com/user-attachments/assets/062be834-3bf6-45cf-aadd-1f7ca8b44193" />
+
+---
+
+### 3. Benutzer 1 – Nur Lesen (`leser`)
+
+**Login** (`authSource=Tarlos`):
+
+<img width="1167" height="417" alt="Leser Login" src="https://github.com/user-attachments/assets/39a69449-f76c-4147-8a52-093cadeb97f4" />
+
+**Lesen funktioniert:**
+
+<img width="556" height="214" alt="Leser find() erfolgreich" src="https://github.com/user-attachments/assets/7990950e-ae54-42e7-a38a-495dd2de9277" />
+
+**Schreiben gibt Fehler:**
+
+<img width="841" height="145" alt="Leser insertOne() Fehler" src="https://github.com/user-attachments/assets/3e2087c4-c3a9-446d-bc46-285e5809e4ef" />
+
+---
+
+### 4. Benutzer 2 – Lesen & Schreiben (`schreiber`)
+
+**Login** (`authSource=admin`):
+
+<img width="1156" height="414" alt="Schreiber Login" src="https://github.com/user-attachments/assets/42a4db9a-8b29-44e1-bdee-05b5f333761a" />
+
+**Lesen funktioniert** ✅
+
+**Schreiben funktioniert:**
+
+<img width="542" height="442" alt="Schreiber insertOne() erfolgreich" src="https://github.com/user-attachments/assets/91d6734e-7031-4ea4-a91a-25e1bffa9f28" />
