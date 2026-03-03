@@ -76,13 +76,14 @@ MongoDB wird aus Sicherheitsgründen mit restriktiven Standardeinstellungen inst
 
 ### 1. Dokument vor dem Einfügen
 
-<img width="841" height="145" alt="Dokument vor dem Einfügen" src="https://github.com/user-attachments/assets/ab287e17-6ad9-40c2-8396-6e870d965231" />
+<img width="737" height="650" alt="Screenshot 2026-03-02 224547" src="https://github.com/user-attachments/assets/a753ecea-a316-4618-8908-267c757e34a4" />
+
 
 ---
 
 ### 2. Dokument nach Anpassung des Datentyps
 
-<img width="864" height="397" alt="Compass nach Datumänderung" src="https://github.com/user-attachments/assets/8248997d-e452-43b7-b574-b73e743412b9" />
+<img width="864" height="397" alt="Screenshot 2026-03-02 224713" src="https://github.com/user-attachments/assets/6e3f08f5-70f4-4cf1-aac4-cd6ff0c8af88" />
 
 ---
 
