@@ -78,3 +78,21 @@ Ersetzt `#security:` mit `security:\n  authorization: enabled`, um die Authentif
 **Security-Konfiguration:**
 
 <img width="838" height="75" alt="MongoDB Config - security" src="https://github.com/user-attachments/assets/2b1de31b-10d4-49d6-996d-31d82d57e70c" />
+
+C) Erste Schritte Shell (10%)
+Screenshot von Compass, der zeigt, dass Sie die Befehle eingegeben haben
+<img width="579" height="693" alt="Screenshot 2026-03-03 111041" src="https://github.com/user-attachments/assets/b1c38ad3-7c7a-4d8f-a002-633d105c5f01" />
+Screenshot von der MongoDB-Shell auf dem Linux-Server, der zeigt, dass Sie die Befehle eingegeben haben.<img width="633" height="373" alt="Screenshot 2026-03-03 114404" src="https://github.com/user-attachments/assets/7520478f-037e-4456-9ca3-2297ddf78ced" />
+Was machen die Befehle 1-5?
+
+show dbs / show databases → Zeigt alle Datenbanken mit ihrer Grösse an. Beide Befehle machen dasselbe.
+use Tarlos → Wechselt in die Datenbank Tarlos
+show collections / show tables → Zeigt alle Collections in der aktuellen Datenbank. Beide Befehle machen dasselbe.
+
+Unterschied Collections vs Tables?
+
+Tables ist der Begriff aus SQL (relationale Datenbanken) – Daten sind in festen Zeilen und Spalten gespeichert
+Collections ist der Begriff aus MongoDB (NoSQL) – Daten sind flexible JSON-Dokumente ohne festes Schema
+In MongoDB existiert show tables nur als Alias für Leute die SQL gewohnt sind ✅
+
+D)
