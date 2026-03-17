@@ -1,11 +1,7 @@
-// KN-M-03 Teil D: Daten veraendern
-// WICHTIG: Zuerst separat ausfuehren: use gamingDB;
-// WICHTIG: Zuerst drop_collections.js, dann create_collections.js, dann insert_data.js ausfuehren.
 
-// =============================================
 // 1) updateOne auf Collection "spiele"
 //    Preis von Minecraft auf 19.90 aendern (mit _id)
-// =============================================
+
 
 var minecraft = db.spiele.findOne({ titel: "Minecraft" });
 
@@ -21,12 +17,12 @@ db.spiele.updateOne(
 print("Nachher:");
 printjson(db.spiele.findOne({ _id: minecraft._id }, { titel: 1, preis: 1, bewertung: 1 }));
 
-// =============================================
+
 // 2) updateMany auf Collection "spieler"
 //    Alle Spieler mit Username "NoobMaster" ODER "TurboGamer99"
 //    bekommen ein neues Feld "aktiv: false"
 //    (ODER-Verknuepfung, ohne _id, aendert mehr als 1 Datensatz)
-// =============================================
+
 
 print("=== updateMany: NoobMaster und TurboGamer99 auf inaktiv setzen ===");
 
@@ -46,10 +42,10 @@ db.spieler.find(
   { _id: 0, username: 1, aktiv: 1 }
 ).forEach(printjson);
 
-// =============================================
+
 // 3) replaceOne auf Collection "plattformen"
 //    Nintendo Switch komplett ersetzen (neue Generation)
-// =============================================
+
 
 var nintendoSwitch = db.plattformen.findOne({ name: "Nintendo Switch" });
 
