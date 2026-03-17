@@ -9,8 +9,7 @@
 
 ### Diagramm
 
-<!-- Bild des konzeptionellen Datenmodells hier einfügen -->
-![Konzeptionelles Datenmodell](screenshot_konzeptionell.png)
+<img width="1208" height="482" alt="Konzeptionelles Datenmodell" src="https://github.com/user-attachments/assets/f3aac717-4775-4385-be01-08e29ccfe6d5" />
 
 ### Beschreibung
 
@@ -79,16 +78,13 @@ Ein Spiel kann von mehreren Spielern gespielt werden, und ein Spieler kann mehre
 
 Ein Spiel kann auf mehreren Plattformen verfügbar sein, und eine Plattform bietet mehrere Spiele an. Dies ist die zweite **netzwerkförmige Beziehung**.
 
-> **Hinweis:** Das konzeptionelle Datenmodell liegt als draw.io-Datei (`konzeptionelles_datenmodell.drawio`) bei.
-
 ---
 
 ## B) Logisches Modell für MongoDB (60%)
 
 ### Diagramm
 
-<!-- Bild des logischen Datenmodells hier einfügen -->
-![Logisches Datenmodell](screenshot_logisch.png)
+<img width="993" height="553" alt="Logisches Datenmodell" src="https://github.com/user-attachments/assets/f8101ba9-45a5-4b6a-989a-9991404bbd29" />
 
 ### Übersicht
 
@@ -172,8 +168,6 @@ Für die N:M-Beziehungen (Spiel ↔ Spieler, Spiel ↔ Plattform) wird **Referen
 - „Welche Spieler besitzen Spiel X?"
 - „Welche Spiele besitzt Spieler Y?"
 
-> **Hinweis:** Das logische Datenmodell liegt als draw.io-Datei (`logisches_datenmodell_mongodb.drawio`) bei.
-
 ---
 
 ## C) Anwendung des Schemas in MongoDB (10%)
@@ -212,10 +206,7 @@ Nach der Ausführung zeigt `db.getCollectionNames()` folgendes Ergebnis:
 
 ### Screenshot: Collections erstellt
 
-<!-- Screenshot hier einfügen, der zeigt dass die 3 Collections existieren -->
-![Collections erstellt](screenshot_collections.png)
-
-> **Hinweis:** Das Script liegt als separate Datei (`create_collections.js`) bei.
+<img width="229" height="131" alt="Collections erstellt" src="https://github.com/user-attachments/assets/8b80ba9b-c33d-4ae1-b38a-31e53891b413" />
 
 ---
 
