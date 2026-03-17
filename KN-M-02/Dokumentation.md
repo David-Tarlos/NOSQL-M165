@@ -1,5 +1,5 @@
 # KN-M-02: Datenmodellierung für MongoDB
-
+---
 **Thema:** Videospiele & Gaming  
 **Datenbank:** `gamingDB`
 
