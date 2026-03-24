@@ -145,9 +145,7 @@ db.spiele.aggregate([
 
 **B1 — Spiele mit Plattform-Details (`$lookup`):**
 
-![B1_1](Dateien/B1_lookup_plattformen_1.png)
-
-![B1_2](Dateien/B1_lookup_plattformen_2.png)
+![B1](Dateien/B1_lookup_plattformen_2.png)
 
 **B2 — Spiele mit >2 Spielern, sortiert nach Spieleranzahl:**
 
