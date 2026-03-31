@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KN-M-07 — gamingDB Abfragen</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #0f0f1a;
+      color: #e0e0e0;
+      min-height: 100vh;
+    }
+
+    header {
+      background: linear-gradient(135deg, #1a1a2e, #16213e);
+      border-bottom: 2px solid #7c3aed;
+      padding: 1.5rem 2rem;
+      text-align: center;
+    }
+
+    header h1 {
+      font-size: 1.8rem;
+      color: #a78bfa;
+    }
+
+    header p {
+      color: #9ca3af;
+      margin-top: 0.3rem;
+    }
+
+    main {
+      max-width: 1200px;
+      margin: 2rem auto;
+      padding: 0 1.5rem;
+    }
+
+    .controls {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .btn {
+      background: #7c3aed;
+      color: white;
+      border: none;
+      padding: 0.75rem 2rem;
+      font-size: 1rem;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .btn:hover { background: #6d28d9; }
+    .btn:disabled { background: #4b5563; cursor: wait; }
+
+    .status {
+      margin-top: 0.75rem;
+      font-size: 0.9rem;
+      color: #9ca3af;
+    }
+
+    .status.error { color: #f87171; }
+    .status.success { color: #34d399; }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .card {
+      background: #1a1a2e;
+      border: 1px solid #2d2d44;
+      border-radius: 12px;
+      overflow: hidden;
+      transition: border-color 0.2s;
+    }
+
+    .card:hover { border-color: #7c3aed; }
+
+    .card-header {
+      background: #16213e;
+      padding: 1rem 1.25rem;
+      border-bottom: 1px solid #2d2d44;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .card-header h2 {
+      font-size: 1rem;
+      color: #a78bfa;
+    }
+
+    .badge {
+      font-size: 0.75rem;
+      padding: 0.2rem 0.6rem;
+      border-radius: 999px;
+      font-weight: 600;
+    }
+
+    .badge.find { background: #1e3a5f; color: #60a5fa; }
+    .badge.agg { background: #3b1f4e; color: #c084fc; }
+
+    .card-body {
+      padding: 1rem 1.25rem;
+      overflow-x: auto;
+    }
+
+    .card-body p.desc {
+      color: #9ca3af;
+      font-size: 0.85rem;
+      margin-bottom: 0.75rem;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+    }
+
+    th {
+      text-align: left;
+      padding: 0.5rem 0.75rem;
+      background: #0f0f1a;
+      color: #a78bfa;
+      border-bottom: 1px solid #2d2d44;
+      white-space: nowrap;
+    }
+
+    td {
+      padding: 0.5rem 0.75rem;
+      border-bottom: 1px solid #1f1f35;
+      white-space: nowrap;
+    }
+
+    tr:hover td { background: #1f1f35; }
+
+    .empty { color: #6b7280; font-style: italic; }
+
+    .count {
+      font-size: 0.8rem;
+      color: #6b7280;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>KN-M-07 — gamingDB Abfragen</h1>
+    <p>MongoDB &middot; Node.js &middot; 3 find() + 3 aggregate()</p>
+  </header>
+
+  <main>
+    <div class="controls">
+      <button class="btn" id="loadBtn" onclick="loadQueries()">Abfragen laden</button>
+      <div class="status" id="status"></div>
+    </div>
+
+    <div class="grid" id="grid"></div>
+  </main>
+
+  <script>
+    const queries = [
+      { key: "q1", title: "Q1: Action-RPG mit Bewertung > 8.0", type: "find", desc: "$and-Verknuepfung (KN-M-03)" },
+      { key: "q2", title: "Q2: Plattformen mit 'Station'", type: "find", desc: "$regex-Suche (KN-M-03)" },
+      { key: "q3", title: "Q3: Japanische Entwickler", type: "find", desc: "Subdocument-Filter entwickler.land (KN-M-04 C2)" },
+      { key: "q4", title: "Q4: Spiele pro Genre", type: "agg", desc: "$group + $sum (KN-M-04 A3)" },
+      { key: "q5", title: "Q5: Spiele mit Plattformen", type: "agg", desc: "$lookup spiele → plattformen (KN-M-04 B1)" },
+      { key: "q6", title: "Q6: Spiel-Plattform-Paare", type: "agg", desc: "$unwind + $lookup (KN-M-04 C3)" }
+    ];
+
+    function escapeHtml(str) {
+      const div = document.createElement("div");
+      div.textContent = String(str);
+      return div.innerHTML;
+    }
+
+    function buildTable(data) {
+      if (!data || data.length === 0) return '<p class="empty">Keine Ergebnisse</p>';
+
+      const keys = [...new Set(data.flatMap(d => Object.keys(d)))].filter(k => k !== "_id");
+      if (keys.length === 0) return '<p class="empty">Keine Felder</p>';
+
+      let html = '<table><thead><tr>';
+      for (const k of keys) html += `<th>${escapeHtml(k)}</th>`;
+      html += '</tr></thead><tbody>';
+
+      for (const row of data) {
+        html += '<tr>';
+        for (const k of keys) {
+          const val = row[k];
+          const display = (val && typeof val === "object") ? JSON.stringify(val) : (val ?? "");
+          html += `<td>${escapeHtml(display)}</td>`;
+        }
+        html += '</tr>';
+      }
+      html += '</tbody></table>';
+      return html;
+    }
+
+    async function loadQueries() {
+      const btn = document.getElementById("loadBtn");
+      const status = document.getElementById("status");
+      const grid = document.getElementById("grid");
+
+      btn.disabled = true;
+      status.className = "status";
+      status.textContent = "Verbinde mit MongoDB...";
+      grid.innerHTML = "";
+
+      try {
+        const res = await fetch("/api/queries");
+        const data = await res.json();
+
+        if (data.error) {
+          status.className = "status error";
+          status.textContent = "Fehler: " + data.error;
+          btn.disabled = false;
+          return;
+        }
+
+        status.className = "status success";
+        status.textContent = "Alle 6 Abfragen erfolgreich geladen.";
+
+        for (const q of queries) {
+          const results = data[q.key] || [];
+          grid.innerHTML += `
+            <div class="card">
+              <div class="card-header">
+                <h2>${escapeHtml(q.title)}</h2>
+                <div>
+                  <span class="count">${results.length} Ergebnis${results.length !== 1 ? "se" : ""}</span>
+                  <span class="badge ${q.type}">${q.type === "find" ? "find()" : "aggregate()"}</span>
+                </div>
+              </div>
+              <div class="card-body">
+                <p class="desc">${escapeHtml(q.desc)}</p>
+                ${buildTable(results)}
+              </div>
+            </div>
+          `;
+        }
+      } catch (err) {
+        status.className = "status error";
+        status.textContent = "Verbindungsfehler: " + err.message;
+      }
+
+      btn.disabled = false;
+    }
+  </script>
+</body>
+</html>

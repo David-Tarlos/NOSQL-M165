@@ -1,0 +1,10 @@
+{
+  "name": "kn-m-07",
+  "version": "1.0.0",
+  "description": "MongoDB Node.js Abfragen fuer gamingDB",
+  "main": "app.js",
+  "dependencies": {
+    "express": "^4.21.0",
+    "mongodb": "^6.12.0"
+  }
+}
