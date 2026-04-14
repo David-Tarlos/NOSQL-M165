@@ -110,11 +110,21 @@ DETACH DELETE sp
 
 ### Screenshots
 
-<!-- Screenshot: DELETE ohne DETACH (Fehler) -->
+DELETE ohne DETACH — Fehler, weil noch Kanten existieren:
 
-<!-- Screenshot: DETACH DELETE (Erfolg) -->
+![DELETE Fehler](Dateien/screenshots/c_delete_error.png)
 
-<!-- Screenshot: Kontrolle — NoobMaster existiert nicht mehr -->
+Vorher prüfen — NoobMaster hat 8 Beziehungen (3x BESITZT, 3x SPIELT, 2x SPIELT_AUF):
+
+![Beziehungen vorher](Dateien/screenshots/c_beziehungen_vorher.png)
+
+DETACH DELETE — 1 Knoten und 8 Beziehungen gelöscht:
+
+![DETACH DELETE](Dateien/screenshots/c_detach_delete.png)
+
+Kontrolle — NoobMaster existiert nicht mehr:
+
+![Kontrolle nachher](Dateien/screenshots/c_kontrolle_nachher.png)
 
 ---
 
@@ -130,11 +140,21 @@ DETACH DELETE sp
 
 ### Screenshots
 
-<!-- Screenshot: U1 — Username und Email geaendert -->
+U1 — ShadowNinja zu DarkNinja umbenannt (SET 2 Properties):
 
-<!-- Screenshot: U2 — Preis reduziert -->
+![U1 SET](Dateien/screenshots/d_u1_set.png)
 
-<!-- Screenshot: U3 — Kanten-Attribute aktualisiert -->
+U1 — Kontrolle (neuer Username und Email bestätigt):
+
+![U1 Kontrolle](Dateien/screenshots/d_u1_kontrolle.png)
+
+U2 — Cyberpunk 2077 Preis auf 19.90 reduziert:
+
+![U2 SET](Dateien/screenshots/d_u2_set.png)
+
+U3 — SwissGamer Minecraft Spielstunden auf 750 und Datum auf 2025-01-05 aktualisiert:
+
+![U3 SET](Dateien/screenshots/d_u3_set.png)
 
 ---
 
@@ -171,11 +191,17 @@ RETURN sp.username, anzahl_spiele, s.titel, b.kaufpreis
 
 ### Screenshots
 
-<!-- Screenshot: MERGE — bestehende Plattform (kein Duplikat) -->
+MERGE — Steam (PC) existiert bereits, kein Duplikat erstellt ("Set 1 property"):
 
-<!-- Screenshot: MERGE — neue Plattform erstellt -->
+![MERGE bestehend](Dateien/screenshots/e_merge_existing.png)
 
-<!-- Screenshot: WITH — Spieler mit mehr als 2 Spielen -->
+MERGE — Mobile existiert noch nicht, neuer Knoten erstellt ("Created 1 node"):
+
+![MERGE neu](Dateien/screenshots/e_merge_new.png)
+
+WITH — Spieler mit mehr als 2 Spielen und ihre Kaufpreise:
+
+![WITH Ergebnis](Dateien/screenshots/e_with.png)
 
 ---
 
