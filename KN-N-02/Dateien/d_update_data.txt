@@ -1,0 +1,43 @@
+// KN-N-02 Teil D: Daten veraendern
+
+// =============================================
+// U1: Spieler aendert Username und Email (SET auf Knoten)
+// =============================================
+
+// ShadowNinja aendert seinen Username und seine Email
+MATCH (sp:Spieler {username: "ShadowNinja"})
+SET sp.username = "DarkNinja", sp.email = "dark.ninja@gmail.com"
+RETURN sp
+
+// Kontrolle:
+MATCH (sp:Spieler {username: "DarkNinja"})
+RETURN sp.username, sp.email
+
+
+// =============================================
+// U2: Preis eines Spiels wird reduziert — Sale (SET auf Knoten-Attribut)
+// =============================================
+
+// Cyberpunk 2077 im Sale: Preis von 49.90 auf 19.90 reduzieren
+MATCH (s:Spiel {titel: "Cyberpunk 2077"})
+SET s.preis = 19.90
+RETURN s.titel, s.preis
+
+// Kontrolle:
+MATCH (s:Spiel {titel: "Cyberpunk 2077"})
+RETURN s.titel, s.preis
+
+
+// =============================================
+// U3: Spielstunden und letztes Spieldatum auf einer :SPIELT-Kante aktualisieren
+//     (SET auf Beziehung)
+// =============================================
+
+// SwissGamer hat Minecraft weiter gespielt — Stunden und Datum aktualisieren
+MATCH (sp:Spieler {username: "SwissGamer"})-[spielt:SPIELT]->(s:Spiel {titel: "Minecraft"})
+SET spielt.spielstunden = 750.0, spielt.letztes_spieldatum = date("2025-01-05")
+RETURN sp.username, s.titel, spielt.spielstunden, spielt.letztes_spieldatum
+
+// Kontrolle:
+MATCH (sp:Spieler {username: "SwissGamer"})-[spielt:SPIELT]->(s:Spiel {titel: "Minecraft"})
+RETURN sp.username, s.titel, spielt.spielstunden, spielt.letztes_spieldatum

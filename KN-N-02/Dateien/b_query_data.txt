@@ -1,0 +1,63 @@
+// KN-N-02 Teil B: Daten abfragen
+
+// =============================================
+// OPTIONAL MATCH erklaeren
+// =============================================
+
+// Gegeben:
+MATCH (n)
+OPTIONAL MATCH (n)-[r]->(m)
+RETURN n, r, m
+
+// Erklaerung:
+// - MATCH (n) findet ALLE Knoten in der Datenbank.
+// - OPTIONAL MATCH (n)-[r]->(m) versucht, fuer jeden Knoten n eine ausgehende
+//   Beziehung r zu einem Knoten m zu finden.
+// - Der Unterschied zu einem normalen MATCH: Wenn ein Knoten KEINE ausgehende
+//   Beziehung hat, wird er trotzdem zurueckgegeben — r und m sind dann NULL.
+// - Bei einem normalen MATCH wuerde der Knoten komplett aus dem Ergebnis fallen,
+//   wenn keine passende Beziehung existiert.
+// - OPTIONAL MATCH funktioniert also wie ein LEFT JOIN in SQL.
+
+
+// =============================================
+// Q1: Alle Spiele eines bestimmten Genres mit Bewertung > 8.0
+// (WHERE auf Knoten-Attributen)
+// =============================================
+
+MATCH (s:Spiel)
+WHERE s.genre = "Action-RPG" AND s.bewertung > 8.0
+RETURN s.titel, s.genre, s.bewertung, s.preis
+ORDER BY s.bewertung DESC
+
+
+// =============================================
+// Q2: Welche Spieler besitzen ein bestimmtes Spiel und was haben sie bezahlt?
+// (WHERE + Kanten-Attribute)
+// =============================================
+
+MATCH (sp:Spieler)-[b:BESITZT]->(s:Spiel)
+WHERE s.titel = "Minecraft"
+RETURN sp.username, b.kaufdatum, b.kaufpreis
+ORDER BY b.kaufpreis ASC
+
+
+// =============================================
+// Q3: Auf welchen Plattformen ist ein Spiel verfuegbar, das von einem
+//     japanischen Entwickler stammt? (Multi-Hop-Traversal)
+// =============================================
+
+MATCH (e:Entwickler)-[:ENTWICKELT]->(s:Spiel)-[:VERFUEGBAR_AUF]->(p:Plattform)
+WHERE e.land = "Japan"
+RETURN e.name AS entwickler, s.titel AS spiel, p.name AS plattform
+
+
+// =============================================
+// Q4: Spieler mit mehr als 100 Spielstunden in einem Spiel,
+//     sortiert nach Stunden (WHERE auf Kante + ORDER BY)
+// =============================================
+
+MATCH (sp:Spieler)-[spielt:SPIELT]->(s:Spiel)
+WHERE spielt.spielstunden > 100
+RETURN sp.username, s.titel, spielt.spielstunden, spielt.letztes_spieldatum
+ORDER BY spielt.spielstunden DESC

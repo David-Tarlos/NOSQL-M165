@@ -1,0 +1,53 @@
+// KN-N-02 Teil E: Zusaetzliche Klauseln
+
+// =============================================
+// 1) MERGE — Upsert-Pattern (Create if not exists)
+// =============================================
+
+// Erklaerung:
+// MERGE prueft, ob ein Knoten oder eine Beziehung bereits existiert.
+// - Falls JA: wird der bestehende Knoten/die Beziehung zurueckgegeben (kein Duplikat).
+// - Falls NEIN: wird ein neuer Knoten/eine neue Beziehung erstellt.
+// MERGE ist also ein "Upsert" — eine Kombination aus INSERT und UPDATE.
+// Das ist nuetzlich, wenn man Daten importiert und keine Duplikate erzeugen will.
+
+// Beispiel: Plattform "Steam (PC)" existiert bereits — MERGE erstellt kein Duplikat
+MERGE (p:Plattform {name: "Steam (PC)"})
+ON CREATE SET p.hersteller = "Valve", p.typ = "PC"
+ON MATCH SET p.typ = "PC"
+RETURN p
+
+// Beispiel: Neue Plattform "Mobile" existiert noch nicht — MERGE erstellt sie
+MERGE (p:Plattform {name: "Mobile"})
+ON CREATE SET p.hersteller = "Diverse", p.typ = "Handheld"
+ON MATCH SET p.typ = "Handheld"
+RETURN p
+
+// ON CREATE wird nur ausgefuehrt, wenn der Knoten NEU erstellt wird.
+// ON MATCH wird nur ausgefuehrt, wenn der Knoten schon existiert.
+
+
+// =============================================
+// 2) WITH — Ergebnisse zwischen Query-Teilen weiterreichen
+// =============================================
+
+// Erklaerung:
+// WITH leitet Ergebnisse von einem Query-Teil an den naechsten weiter.
+// Es funktioniert wie eine Pipeline: Das Ergebnis des ersten MATCH wird
+// gefiltert/transformiert und dann dem naechsten MATCH als Input gegeben.
+// WITH ermoeglicht es, komplexe Abfragen in logische Schritte aufzuteilen.
+
+// Beispiel: Finde alle Spieler, die mehr als 2 Spiele besitzen,
+//           und zeige dann ihre Spiele mit Kaufpreis
+MATCH (sp:Spieler)-[b:BESITZT]->(s:Spiel)
+WITH sp, count(b) AS anzahl_spiele
+WHERE anzahl_spiele > 2
+MATCH (sp)-[b:BESITZT]->(s:Spiel)
+RETURN sp.username, anzahl_spiele, s.titel, b.kaufpreis
+ORDER BY sp.username, b.kaufpreis DESC
+
+// Hier passiert Folgendes:
+// 1. Erster MATCH: Zaehlt wie viele Spiele jeder Spieler besitzt
+// 2. WITH: Gibt nur sp und die Anzahl weiter, filtert auf > 2
+// 3. Zweiter MATCH: Holt die Details zu den Spielen dieser Spieler
+// Ohne WITH muesste man das als verschachtelte Subquery schreiben.

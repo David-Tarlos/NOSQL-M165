@@ -1,0 +1,38 @@
+// KN-N-02 Teil C: Daten loeschen
+
+// =============================================
+// 1) DELETE ohne DETACH — fuehrt zu einem Fehler
+// =============================================
+
+// Versuch: Den Spieler "NoobMaster" loeschen, der Beziehungen hat
+MATCH (sp:Spieler {username: "NoobMaster"})
+DELETE sp
+
+// Erwarteter Fehler:
+// Cannot delete node <id>, because it still has relationships.
+// To delete this node, you must first delete its relationships.
+//
+// Neo4j erlaubt es NICHT, einen Knoten zu loeschen, der noch Beziehungen hat.
+// Man muesste zuerst alle Kanten manuell loeschen, bevor der Knoten geloescht
+// werden kann.
+
+
+// =============================================
+// 2) DETACH DELETE — loescht Knoten MIT allen Beziehungen
+// =============================================
+
+// Vorher pruefen: Welche Beziehungen hat NoobMaster?
+MATCH (sp:Spieler {username: "NoobMaster"})-[r]-()
+RETURN type(r) AS beziehung, r
+
+// Jetzt mit DETACH DELETE loeschen:
+MATCH (sp:Spieler {username: "NoobMaster"})
+DETACH DELETE sp
+
+// Nachher pruefen: NoobMaster existiert nicht mehr
+MATCH (sp:Spieler {username: "NoobMaster"})
+RETURN sp
+
+// DETACH DELETE entfernt automatisch ALLE Beziehungen des Knotens
+// (BESITZT, SPIELT, SPIELT_AUF) und dann den Knoten selbst.
+// Ohne DETACH muesste man jede Beziehung einzeln loeschen.

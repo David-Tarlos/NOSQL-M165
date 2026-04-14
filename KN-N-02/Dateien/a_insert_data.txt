@@ -1,0 +1,117 @@
+// KN-N-02 Teil A: Daten hinzufuegen
+// Alle Knoten und Beziehungen in einem einzigen CREATE-Statement
+
+CREATE
+
+// =============================================
+// ENTWICKLER (5 Stueck)
+// =============================================
+(e1:Entwickler {name: "Nintendo EPD", gruendungsjahr: 2015, land: "Japan"}),
+(e2:Entwickler {name: "FromSoftware", gruendungsjahr: 1986, land: "Japan"}),
+(e3:Entwickler {name: "EA Sports", gruendungsjahr: 1991, land: "USA"}),
+(e4:Entwickler {name: "Mojang Studios", gruendungsjahr: 2009, land: "Schweden"}),
+(e5:Entwickler {name: "CD Projekt Red", gruendungsjahr: 2002, land: "Polen"}),
+
+// =============================================
+// SPIELE (5 Stueck)
+// =============================================
+(s1:Spiel {titel: "The Legend of Zelda: Tears of the Kingdom", erscheinungsjahr: 2023, preis: 69.90, genre: "Action-Adventure", bewertung: 9.5}),
+(s2:Spiel {titel: "Elden Ring", erscheinungsjahr: 2022, preis: 59.90, genre: "Action-RPG", bewertung: 9.8}),
+(s3:Spiel {titel: "FIFA 24", erscheinungsjahr: 2023, preis: 79.90, genre: "Sport", bewertung: 6.5}),
+(s4:Spiel {titel: "Minecraft", erscheinungsjahr: 2011, preis: 29.90, genre: "Sandbox", bewertung: 9.0}),
+(s5:Spiel {titel: "Cyberpunk 2077", erscheinungsjahr: 2020, preis: 49.90, genre: "Action-RPG", bewertung: 7.5}),
+
+// =============================================
+// SPIELER (5 Stueck)
+// =============================================
+(sp1:Spieler {username: "ShadowNinja", email: "shadow.ninja@gmail.com", registrierungsdatum: date("2022-03-15")}),
+(sp2:Spieler {username: "PixelQueen", email: "pixel.queen@outlook.com", registrierungsdatum: date("2023-07-22")}),
+(sp3:Spieler {username: "TurboGamer99", email: "turbo.gamer@yahoo.com", registrierungsdatum: date("2021-11-05")}),
+(sp4:Spieler {username: "NoobMaster", email: "noob.master@gmail.com", registrierungsdatum: date("2024-01-10")}),
+(sp5:Spieler {username: "SwissGamer", email: "swiss.gamer@bluewin.ch", registrierungsdatum: date("2020-06-30")}),
+
+// =============================================
+// PLATTFORMEN (4 Stueck)
+// =============================================
+(p1:Plattform {name: "PlayStation 5", hersteller: "Sony", typ: "Konsole"}),
+(p2:Plattform {name: "Nintendo Switch", hersteller: "Nintendo", typ: "Handheld"}),
+(p3:Plattform {name: "Steam (PC)", hersteller: "Valve", typ: "PC"}),
+(p4:Plattform {name: "Xbox Series X", hersteller: "Microsoft", typ: "Konsole"}),
+
+// =============================================
+// BEZIEHUNGEN: :ENTWICKELT (Entwickler -> Spiel)
+// =============================================
+(e1)-[:ENTWICKELT]->(s1),
+(e2)-[:ENTWICKELT]->(s2),
+(e3)-[:ENTWICKELT]->(s3),
+(e4)-[:ENTWICKELT]->(s4),
+(e5)-[:ENTWICKELT]->(s5),
+
+// =============================================
+// BEZIEHUNGEN: :VERFUEGBAR_AUF (Spiel -> Plattform)
+// =============================================
+(s1)-[:VERFUEGBAR_AUF]->(p2),
+(s2)-[:VERFUEGBAR_AUF]->(p1),
+(s2)-[:VERFUEGBAR_AUF]->(p3),
+(s2)-[:VERFUEGBAR_AUF]->(p4),
+(s3)-[:VERFUEGBAR_AUF]->(p1),
+(s3)-[:VERFUEGBAR_AUF]->(p3),
+(s3)-[:VERFUEGBAR_AUF]->(p4),
+(s4)-[:VERFUEGBAR_AUF]->(p1),
+(s4)-[:VERFUEGBAR_AUF]->(p2),
+(s4)-[:VERFUEGBAR_AUF]->(p3),
+(s4)-[:VERFUEGBAR_AUF]->(p4),
+(s5)-[:VERFUEGBAR_AUF]->(p1),
+(s5)-[:VERFUEGBAR_AUF]->(p3),
+
+// =============================================
+// BEZIEHUNGEN: :BESITZT (Spieler -> Spiel) mit kaufdatum + kaufpreis
+// =============================================
+(sp1)-[:BESITZT {kaufdatum: date("2023-05-20"), kaufpreis: 69.90}]->(s1),
+(sp1)-[:BESITZT {kaufdatum: date("2022-03-01"), kaufpreis: 59.90}]->(s2),
+(sp1)-[:BESITZT {kaufdatum: date("2020-12-25"), kaufpreis: 19.90}]->(s4),
+(sp2)-[:BESITZT {kaufdatum: date("2023-06-10"), kaufpreis: 65.00}]->(s1),
+(sp2)-[:BESITZT {kaufdatum: date("2023-10-05"), kaufpreis: 79.90}]->(s3),
+(sp2)-[:BESITZT {kaufdatum: date("2021-08-15"), kaufpreis: 29.90}]->(s4),
+(sp3)-[:BESITZT {kaufdatum: date("2022-04-12"), kaufpreis: 49.90}]->(s2),
+(sp3)-[:BESITZT {kaufdatum: date("2019-06-01"), kaufpreis: 24.90}]->(s4),
+(sp3)-[:BESITZT {kaufdatum: date("2021-01-20"), kaufpreis: 39.90}]->(s5),
+(sp4)-[:BESITZT {kaufdatum: date("2024-02-14"), kaufpreis: 44.90}]->(s2),
+(sp4)-[:BESITZT {kaufdatum: date("2024-01-15"), kaufpreis: 79.90}]->(s3),
+(sp4)-[:BESITZT {kaufdatum: date("2024-01-12"), kaufpreis: 29.90}]->(s4),
+(sp5)-[:BESITZT {kaufdatum: date("2023-05-25"), kaufpreis: 59.90}]->(s1),
+(sp5)-[:BESITZT {kaufdatum: date("2020-07-10"), kaufpreis: 25.00}]->(s4),
+(sp5)-[:BESITZT {kaufdatum: date("2021-06-30"), kaufpreis: 29.90}]->(s5),
+
+// =============================================
+// BEZIEHUNGEN: :SPIELT (Spieler -> Spiel) mit spielstunden + letztes_spieldatum
+// =============================================
+(sp1)-[:SPIELT {spielstunden: 120.5, letztes_spieldatum: date("2024-11-10")}]->(s1),
+(sp1)-[:SPIELT {spielstunden: 250.0, letztes_spieldatum: date("2024-12-01")}]->(s2),
+(sp1)-[:SPIELT {spielstunden: 430.0, letztes_spieldatum: date("2024-10-20")}]->(s4),
+(sp2)-[:SPIELT {spielstunden: 85.0, letztes_spieldatum: date("2024-09-15")}]->(s1),
+(sp2)-[:SPIELT {spielstunden: 60.0, letztes_spieldatum: date("2024-08-30")}]->(s3),
+(sp2)-[:SPIELT {spielstunden: 310.0, letztes_spieldatum: date("2024-11-28")}]->(s4),
+(sp3)-[:SPIELT {spielstunden: 180.0, letztes_spieldatum: date("2024-12-05")}]->(s2),
+(sp3)-[:SPIELT {spielstunden: 520.0, letztes_spieldatum: date("2024-11-25")}]->(s4),
+(sp3)-[:SPIELT {spielstunden: 95.0, letztes_spieldatum: date("2024-07-10")}]->(s5),
+(sp4)-[:SPIELT {spielstunden: 35.0, letztes_spieldatum: date("2024-12-10")}]->(s2),
+(sp4)-[:SPIELT {spielstunden: 45.0, letztes_spieldatum: date("2024-11-20")}]->(s3),
+(sp4)-[:SPIELT {spielstunden: 200.0, letztes_spieldatum: date("2024-12-12")}]->(s4),
+(sp5)-[:SPIELT {spielstunden: 150.0, letztes_spieldatum: date("2024-10-01")}]->(s1),
+(sp5)-[:SPIELT {spielstunden: 600.0, letztes_spieldatum: date("2024-12-15")}]->(s4),
+(sp5)-[:SPIELT {spielstunden: 70.0, letztes_spieldatum: date("2024-06-20")}]->(s5),
+
+// =============================================
+// BEZIEHUNGEN: :SPIELT_AUF (Spieler -> Plattform)
+// =============================================
+(sp1)-[:SPIELT_AUF]->(p2),
+(sp1)-[:SPIELT_AUF]->(p3),
+(sp2)-[:SPIELT_AUF]->(p1),
+(sp2)-[:SPIELT_AUF]->(p2),
+(sp3)-[:SPIELT_AUF]->(p3),
+(sp3)-[:SPIELT_AUF]->(p4),
+(sp4)-[:SPIELT_AUF]->(p1),
+(sp4)-[:SPIELT_AUF]->(p3),
+(sp5)-[:SPIELT_AUF]->(p2),
+(sp5)-[:SPIELT_AUF]->(p3)
