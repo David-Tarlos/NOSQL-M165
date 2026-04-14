@@ -32,10 +32,6 @@ Ausführung des CREATE-Statements — 19 Knoten, 58 Beziehungen erstellt:
 
 ![INSERT Ergebnis](Dateien/screenshots/a_insert_result.png)
 
-Graph-Visualisierung nach dem Insert:
-
-![INSERT Graph](Dateien/screenshots/a_insert_graph.png)
-
 ---
 
 ## B) Daten abfragen (20%)
@@ -66,6 +62,10 @@ RETURN n, r, m
 | Q4 | Spieler mit > 100 Spielstunden, sortiert | `spielt.spielstunden > 100` | WHERE auf Kante + ORDER BY |
 
 ### Screenshots
+
+OPTIONAL MATCH — alle Knoten mit ihren Beziehungen (Graph-Ansicht):
+
+![OPTIONAL MATCH Ergebnis](Dateien/screenshots/b_optional_match.png)
 
 Q1 — Action-RPGs mit Bewertung > 8.0 (nur Elden Ring mit 9.8):
 
