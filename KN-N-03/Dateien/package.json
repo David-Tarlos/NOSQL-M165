@@ -1,0 +1,10 @@
+{
+  "name": "kn-n-03",
+  "version": "1.0.0",
+  "description": "Neo4j Node.js Abfragen fuer gamingDB",
+  "main": "app.js",
+  "dependencies": {
+    "express": "^4.21.0",
+    "neo4j-driver": "^5.27.0"
+  }
+}
