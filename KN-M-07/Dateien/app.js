@@ -4,7 +4,7 @@ const path = require("path");
 
 const app = express();
 const PORT = 3000;
-const uri = "mongodb://admin:12345@100.52.14.227:27017/gamingDB?authSource=admin";
+const uri = "mongodb://admin:12345@52.73.228.122:27017/gamingDB?authSource=admin&readPreference=primary&ssl=false";
 
 app.use(express.static(path.join(__dirname, "public")));
 
